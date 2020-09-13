@@ -17,5 +17,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e8c67afbd2732fb47b593f54479c95b9, type: 2}
   - {fileID: 11400000, guid: 3f669728e502bb143b2a3643cef1d6f0, type: 2}
   files: []
-  platform: {fileID: 0}
+  platform: {fileID: 226585567286506634, guid: 27b19bf52b7aaf24c81e88b805d1cb07, type: 3}
   parent: {fileID: 11400000}
