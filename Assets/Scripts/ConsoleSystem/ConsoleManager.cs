@@ -15,11 +15,14 @@ public class ConsoleManager : MonoBehaviour
     private static ConsoleManager instance;
 
     private Console console;
+    int historyIndex = -1;
+    bool lockConsoleInput;
 
     void Awake()
     {
         instance = this;
         console = new Console(commands);
+        console.turnManager = FindObjectOfType<TurnManager>();
 
         SelectInputField();
     }
@@ -27,17 +30,61 @@ public class ConsoleManager : MonoBehaviour
     void Update()
     {
         OnPressedEnter();
+        OnPressedArrows();
+    }
+    public void OnPressedArrows()
+    {
+        if(Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            if(historyIndex == -1)
+                historyIndex += console.commandHistory.Count;
+            else
+            {
+                historyIndex--;
+                if(historyIndex < 0)
+                {
+                    historyIndex = -1;
+                }
+            }
+            if (historyIndex == -1)
+            {
+                PrintToConsoleInput("");
+                return;
+            }
+            PrintToConsoleInput(console.commandHistory[historyIndex]);
+        }
+        else if(Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            if( historyIndex == console.commandHistory.Count )
+                historyIndex = -1;
+            else
+            {
+                historyIndex++;
+                if( historyIndex == console.commandHistory.Count )
+                    historyIndex = -1;
+            }
+            if (historyIndex == -1)
+            {
+                PrintToConsoleInput("");
+                return;
+            }
+            PrintToConsoleInput(console.commandHistory[historyIndex]);
+        }
     }
     public void OnPressedEnter()
     {
-        if(Input.GetKeyDown(KeyCode.Return))
+        if(Input.GetKeyDown(KeyCode.Return) && !lockConsoleInput )
         {
+            historyIndex = -1;
             string consoleOutput = ProcessCommand(consoleInput.text);
 
             consoleText.text += consoleOutput + "\n";
             consoleInput.text = string.Empty;
 
             SelectInputField();
+            lockConsoleInput = true;
+
+            StartCoroutine( LockConsoleInput() );
         }
     }
     public string ProcessCommand(string inputValue)
@@ -48,6 +95,15 @@ public class ConsoleManager : MonoBehaviour
     {
         EventSystem.current.SetSelectedGameObject(consoleInput.gameObject);
         consoleInput.OnSelect(null);
+    }
+    private void PrintToConsoleInput(string h)
+    {
+        consoleInput.text = h;
+    }
+    IEnumerator LockConsoleInput()
+    {
+        yield return new WaitForSeconds(2.2f);
+        lockConsoleInput = false;
     }
 
 }

@@ -59,4 +59,19 @@ public class PlatformCreator : MonoBehaviour
             pointerPos.y += distanceBeetwenBlocks;
         }
     }
+    public bool IsInPlatform(Vector3 pos)
+    {
+        Vector3 clampedPos = Vector3.zero;
+
+        clampedPos.x = Mathf.Clamp(pos.x, -.1f, axisBlockWidth * distanceBeetwenBlocks);
+        clampedPos.y = Mathf.Clamp(pos.y, distanceBeetwenBlocks -.1f, axisBlockWidth  * distanceBeetwenBlocks);
+        clampedPos.z = Mathf.Clamp(pos.z, -.1f, axisBlockLength * distanceBeetwenBlocks);
+
+        if(pos.Equals(clampedPos))
+        {
+            return true;
+        }
+        else
+            return false;
+    }
 }
